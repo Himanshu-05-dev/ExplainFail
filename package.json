@@ -1,0 +1,26 @@
+{
+  "name": "explainfail",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "chalk": "^6.0.1",
+    "commander": "^15.1.0",
+    "execa": "^10.2.1",
+    "prompts": "^2.4.2",
+    "semver": "^7.8.6"
+  },
+  "bin": {
+    "explainfail": "./bin/explainfail.js"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "files": [
+    "bin",
+    "src"
+  ]
+}
