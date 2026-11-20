@@ -1,4 +1,4 @@
-import { execa } from 'execa';
+﻿import { execa } from 'execa';
 import prompts from 'prompts';
 import { runCommand } from './runner.js';
 import { buildContext } from './context.js';
@@ -58,7 +58,7 @@ export async function runLoop(command, options = {}) {
           if (!seenLiveDetectors.has(d.id) && d.match && d.match(liveCtx)) {
             seenLiveDetectors.add(d.id);
             liveMatchOccurred = true;
-            console.log(`explainfail: output matches known problem "${d.id}" — full diagnosis when the process exits.`);
+            console.log(`explainfail: output matches known problem "${d.id}" â€” full diagnosis when the process exits.`);
           }
         }
       }, 500);
@@ -97,7 +97,7 @@ export async function runLoop(command, options = {}) {
       output: currentCommandResult.output,
       exitCode: currentCommandResult.exitCode,
       signal: currentCommandResult.signal,
-      interactive: !options.nonInteractive && Boolean(process.stdin.isTTY && process.stdout.isTTY)
+      interactive: options.interactive !== undefined ? options.interactive : (!options.nonInteractive && Boolean(process.stdin.isTTY && process.stdout.isTTY))
     });
 
     const fBefore = computeFingerprint(ctx);
@@ -123,8 +123,12 @@ export async function runLoop(command, options = {}) {
     const cmdStr = typeof command === 'string' ? command : (command.shell || command.argv?.join(' ') || '');
     console.log('\n' + formatCommandFailure(cmdStr, currentCommandResult.exitCode));
 
-    if (diagnoses.length === 0) {
+    const hasCause = diagnoses.some((d) => d.kind === 'cause');
+    if (!hasCause) {
       console.log('\n' + formatUnknown(fBefore.errorLine));
+      for (const d of diagnoses) {
+        console.log('\n' + formatDiagnosis(d));
+      }
       runLog.rounds.push(roundLog);
       runLog.finalStatus = 'UNKNOWN_ERROR';
       saveRunLog(cwd, runLog);
@@ -330,3 +334,5 @@ export async function runLoop(command, options = {}) {
 }
 
 export default runLoop;
+
+
