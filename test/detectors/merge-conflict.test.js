@@ -1,4 +1,4 @@
-import test from 'node:test';
+﻿import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,19 +10,7 @@ test('merge-conflict detects files with all 3 conflict markers', async () => {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'explainfail-conflict-test-'));
   try {
     const fileWithConflict = path.join(tmpDir, 'file.js');
-    fs.writeFileSync(
-      fileWithConflict,
-      `
-const a = 1;
-<<<<<<< HEAD
-const b = 2;
-=======
-const b = 3;
->>>>>>> branch-xyz
-console.log(a, b);
-      `,
-      'utf8'
-    );
+    fs.writeFileSync(fileWithConflict, ['', 'const a = 1;', '<' + '<<<<<< HEAD', 'const b = 2;', '=' + '======', 'const b = 3;', '>' + '>>>>>> branch-xyz', 'console.log(a, b);'].join('\n'), 'utf8');
 
     const conflicts = await findConflictFiles(tmpDir);
     assert.ok(conflicts.length >= 1);
@@ -44,3 +32,5 @@ console.log(a, b);
 test('merge-conflict match returns null on clean output', () => {
   assert.equal(match(buildContext({ output: 'Everything built successfully' })), null);
 });
+
+
